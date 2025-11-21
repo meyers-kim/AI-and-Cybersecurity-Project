@@ -1,78 +1,82 @@
-# A4S Evaluation module
+# AI Security Project – Augmentation Consistency Score (ACS)
+**Course:** AI and Cybersecurity  
+**University:** University of Luxembourg (2025/2026)  
+**Name:** Kim Meyers  
+**Student ID:** 021105204B
 
-# Quickstart for Evaluation module
+This repository contains my work for the AI Security course project.
+The goal is to implement a custom metric and integrate it into the A4S evaluation framework.
 
-## How to run within local development environment
+---
 
-### Prerequisites
-To run the local development environment, you need first to launch the services containers (database, redis, etc.). Please checkout API repo for instructions on how to do this.
+## 1. Metric: Augmentation Consistency Score (ACS)
 
-### Configuration of development environment
-We use `uv` as environment manager, you can configure python dependencies with the following command:
+Location:  
+a4s-eval/a4s_eval/metrics/model_metrics/acs_tabular_monai.py
 
-```bash
-uv sync --frozen --group dev
-```
+Registry decorator:  
+@model_metric
 
-<!-- We provide a pre-commit hook to automatically check and format your code before each commit. You can install the pre-commit hooks with the following command:
+Idea:  
+ACS measures how stable a model’s predictions are when the input is slightly perturbed.
 
-```bash
-uv run pre-commit install
-``` -->
+The model predicts on:
+- the original input data
+- an augmented/perturbed version created with MONAI (Gaussian noise + smoothing)
 
-### Launching locally the A4S Evaluation API
-With the services running, you can now launch the A4S Evaluation API locally.
+ACS = % of predictions that remain the same after augmentation
 
-```bash
-uv sync --frozen --group dev
-bash tasks/start_api.sh
-```
+The metric returns:
+- baseline accuracy
+- augmented accuracy
+- ACS value
+- accuracy drop
 
-### Launching locally the A4S Evaluation Worker
-With the services running, you can now launch the A4S Evaluation Worker locally.
+Applies to:
+Tabular classification models in A4S (TabularClassificationModel).
 
-```bash
-uv sync --frozen --group dev
-bash tasks/start_worker.sh
-```
 
-### How to manually run linter
-We use ruff for linting. This step is automatically run before each commit if the pre-commit hooks are configured.
+## 2. MONAI Usage
 
-To manually run the linter, you can use the following command:
+Although MONAI is mainly used for medical imaging, here it is used purely as an augmentation library for mild perturbations on tabular feature arrays.
 
-```bash
-uv sync --frozen --group dev
-uv run ruff check .
-uv run ruff format .
-```
+Transforms used:
+- RandGaussianNoise
+- RandGaussianSmooth
 
-### How to run tests
-To run the unit tests, you can use the following command:
+---
 
-```bash
-uv sync --frozen --group test
-uv run pytest tests/
-```
+## 3. Tests
 
-### How to log and customise logs
+A4S automatically discovers and runs the metric using:
 
-We use a single package-wide logger named as the main package: `a4s_api`.
+tests/metrics/model_metrics/test_execute.py
 
-To log, simply import the logger and use it:
+Additional import validation:
 
-```python
-from a4s_api.utils import get_logger
+tests/metrics/model_metrics/test_acs_tabular_monai.py
 
-get_logger().info("This is an info message")
-get_logger().error("This is an error message")
-```
+Run tests inside a4s-eval/:
 
-You can customize the logging configuration by modifying the `./config/logging.yaml` file.
+uv sync
+uv run pytest -s tests/metrics/model_metrics
 
-For instance, in the loggers section, you can customize the level of logging for different loggers, such as the `a4s_api` logger (containing our messages) or the `uvicorn` and `sqlalchemy` loggers.
+Expected output example:
 
-You can also customize the message format by modifying the `formatters.colored.format` field in the loggers section.
-See [official Python documentation on LogRecord attributes](https://docs.python.org/3/library/logging.html#logrecord-attributes) for a full list of available fields.
+[ACS_TABULAR_MONAI] acs=0.9400, acc_base=0.7310, acc_noisy=0.7290, acc_drop=0.0020
 
-Please do not push your local changes, except if necessary. For instance, DEBUG log in `logging.yaml` should not be pushed.
+This confirms the metric works and all tests pass.
+
+
+
+## 4. Notebook (for presentation)
+
+A Jupyter notebook is included to visually demonstrate the ACS idea using CIFAR-10 images.  
+This was allowed and approved in class since tabular data is not visually interpretable very well.
+
+The notebook shows:
+- original vs augmented images
+- prediction flips
+- accuracy and ACS bar charts
+
+The notebook is not required by A4S but is helpful for my final presentation.

@@ -15,19 +15,34 @@ def accuracy(
     dataset: Dataset,
     functional_model: TabularClassificationModel,
 ) -> list[Measure]:
-    # Both x and y (the features and the target) are contained in dataset.data as a dataframe.
-    # To identify the target (y), use the datashape.target object, which has a name property. Use this property to index the aforementioned dataframe.
-    # To identify the features (x), use the datashape.features list of object. Similarly each object in this list has a name property to index the dataframe.
+    
 
-    # Inspect FunctionalModel definition to identify the function to use to compute the model predictions.
+    # 1. full dataframe
+    df: pd.DataFrame = dataset.data
 
-    # Use the y (from the dataset.data) and the prediction to cumpute the accuracy.
+    # we can add a limit to avoid heavy computation if needed
+    # df = df.head(10_000)
 
-    # Below is a placeholder that allows pytest to pass.
+    # 2. target and feature columns from datashape
+    target_col = datashape.target.name
+    feature_cols = [f.name for f in datashape.features]
 
-    # If this takes too many resources (e.g., runs very long or causes a memory error), feel free to limit the dataset to the first 10,000 examples.
+    y_true = df[target_col].to_numpy()
+    X = df[feature_cols]
 
-    accuracy_value = 0.99
+    # 3. useing the functional model to get class predictions:
+    # TabularClassificationModel defines predict_class: Array -> Array
+    # Array is typically a numpy array.
+    X_np = X.to_numpy()
+    y_pred_raw = functional_model.predict_class(X_np)
+
+    y_pred = np.asarray(y_pred_raw)
+
+    if y_pred.ndim > 1:
+        y_pred = y_pred.argmax(axis=1)
+
+    # 4. accuracy
+    acc_value = float((y_true == y_pred).mean())
 
     current_time = datetime.now()
-    return [Measure(name="accuracy", score=accuracy_value, time=current_time)]
+    return [Measure(name="accuracy", score=acc_value, time=current_time)]
