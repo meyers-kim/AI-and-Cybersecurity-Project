@@ -1,6 +1,5 @@
 import uuid
 
-from numpy import isin
 import pandas as pd
 from a4s_eval.metric_registries.model_metric_registry import model_metric_registry
 from a4s_eval.metric_registries.model_metric_registry import ModelMetric
