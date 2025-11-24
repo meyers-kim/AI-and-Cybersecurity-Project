@@ -4,15 +4,18 @@ import numpy as np
 import pandas as pd
 
 try:
-    from monai.transforms import RandGaussianNoise # type: ignore
+    from monai.transforms import RandGaussianNoise  # type: ignore
 except ModuleNotFoundError:
+
     class RandGaussianNoise:
         """
         Lightweight fallback for monais RandGaussianNoise transform.
         Works on NumPy arrays and matches the interface used below.
         """
 
-        def __init__(self, prob: float = 0.1, std: float = 0.1, mean: float = 0.0) -> None:
+        def __init__(
+            self, prob: float = 0.1, std: float = 0.1, mean: float = 0.0
+        ) -> None:
             self.prob = prob
             self.std = std
             self.mean = mean
@@ -23,6 +26,7 @@ except ModuleNotFoundError:
                 return x
             noise = np.random.normal(loc=self.mean, scale=self.std, size=x.shape)
             return x + noise
+
 
 from a4s_eval.data_model.evaluation import DataShape, Dataset, Model
 from a4s_eval.data_model.measure import Measure
