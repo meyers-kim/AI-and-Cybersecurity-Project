@@ -15,8 +15,6 @@ def accuracy(
     dataset: Dataset,
     functional_model: TabularClassificationModel,
 ) -> list[Measure]:
-    
-
     # 1. full dataframe
     df: pd.DataFrame = dataset.data
 

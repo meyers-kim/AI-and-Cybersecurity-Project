@@ -58,7 +58,6 @@ def acs_tabular_monai(
         f"acc_base={acc_base:.4f}, acc_noisy={acc_noisy:.4f}, acc_drop={acc_drop:.4f}"
     )
 
-
     now = datetime.now()
     return [
         Measure(name="acs_monai", score=float(acs), time=now),
