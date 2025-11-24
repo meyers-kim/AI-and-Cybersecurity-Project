@@ -29,11 +29,9 @@ def load_ollama_text_model(model_config: ModelConfig) -> TextGenerationModel:
         try:
             resp = ollama.generate(model=model_name, prompt=text_input, **kwargs)
         except Exception as exc:
-            msg = str(exc)
-            if "Failed to connect to Ollama" in msg:
-                return f"[ollama-offline-mock] {text_input}"
             raise RuntimeError(f"ollama.generate failed: {exc}") from exc
 
+        # Normalize common response shapes
         if isinstance(resp, str):
             return resp
         if isinstance(resp, dict):
@@ -43,6 +41,7 @@ def load_ollama_text_model(model_config: ModelConfig) -> TextGenerationModel:
             return str(resp)
         if isinstance(resp, (list, tuple)):
             return " ".join(map(str, resp))
+        # Some versions may return an object with attributes
         for attr in ("text", "content", "output", "response"):
             if hasattr(resp, attr):
                 val = getattr(resp, attr)
