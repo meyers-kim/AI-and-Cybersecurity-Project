@@ -59,7 +59,6 @@ def make_resnet18_100(num_classes: int = 100) -> nn.Module:
     return model
 
 
-
 affine = RandAffine(
     prob=1.0,
     rotate_range=0.1,
@@ -75,7 +74,6 @@ def apply_monai(x: torch.Tensor) -> torch.Tensor:
     x_t = noise(x_t)
     x_t = blur(x_t)
     return x_t
-
 
 
 def get_cifar100_loaders(
@@ -104,7 +102,6 @@ def get_cifar100_loaders(
     test_loader = DataLoader(test_subset_ds, batch_size=batch_size, shuffle=False)
 
     return train_loader, test_loader
-
 
 
 def train_one_epoch(model: nn.Module, loader: DataLoader, device: torch.device):
@@ -184,10 +181,8 @@ def evaluate_acs(
                     if saved >= max_flips_per_model:
                         break
 
-                    # original & augmented pair 
-                    pair = torch.stack(
-                        [images[i].cpu(), images_aug[i].cpu()], dim=0
-                    )
+                    # original & augmented pair
+                    pair = torch.stack([images[i].cpu(), images_aug[i].cpu()], dim=0)
 
                     # upscale to 256x256
                     upscaled = TF.resize(pair, [256, 256])
