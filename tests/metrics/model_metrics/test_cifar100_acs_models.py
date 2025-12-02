@@ -14,8 +14,6 @@ import pandas as pd
 from pathlib import Path
 import shutil
 
-import pytest
-
 
 class TinyCNN100(nn.Module):
     def __init__(self, num_classes: int = 100):
