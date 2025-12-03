@@ -3,6 +3,8 @@
 
 **Name:** Kim Meyers (021105204B)
 
+**Github Link:** https://github.com/meyers-kim/AI-and-Cybersecurity-Project
+
 This repository contains my work for the AI Security course project.
 The goal is to implement a custom metric and integrate it into the A4S evaluation framework.
 
