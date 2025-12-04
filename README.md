@@ -12,6 +12,8 @@ The goal is to implement a custom metric and integrate it into the A4S evaluatio
 
 ## 1. Metric: Augmentation Consistency Score (ACS)
 
+The Augmentation Consistency Score (ACS) measures how consistent AI models remain when small random perturbations are applied to their inputs, helping evaluate robustness and stability against minor noise or attacks.
+
 **Location:**
 `a4s-eval/a4s_eval/metrics/model_metrics/acs_tabular_monai.py`
 
@@ -165,7 +167,7 @@ This notebook provides the main visuals for the final presentation.
 
 ---
 
-## 6. Experimental Findings
+## 6. Experimental Results and Insights
 
 * ACS reveals how robust models are to small input changes.
 * **Higher ACS values** indicate **more stable and consistent models**.
